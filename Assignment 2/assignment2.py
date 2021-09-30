@@ -51,13 +51,11 @@ start_node = Path_Node(start_pos, None, 0, start_h, start_h)
 opens.append(start_node)
 while len(opens) > 0:
     current_node = min(opens,key=attrgetter('f'))
-    print(current_node.get_pos())
     opens.remove(current_node)
     closed.append(current_node)
 
     # First, check if we've won.
     if current_node.get_pos() == goal_pos:
-        print('found it: ', current_node.get_pos())
         end_node = current_node
         break
 
@@ -88,11 +86,10 @@ while len(opens) > 0:
         child_f = child_g + child_h
         opens.append(Path_Node([current_node.get_pos()[0] + x, current_node.get_pos()[1] + y ], current_node, child_g, child_h, child_f))
 
-
+path = []
 while(end_node != None and end_node.get_parent() != None):
-    print(end_node.get_pos())
+    path.append(end_node.get_pos())
     end_node = end_node.get_parent()
+path.append(end_node.get_pos())
 
-print(len(opens))
-
-map.show_map()
+map.show_map_with_path(path)

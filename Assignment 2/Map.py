@@ -209,7 +209,7 @@ class Map_Obj():
         # Define width and height of image
         width = map.shape[1]
         height = map.shape[0]
-        
+
         # Define scale of the image
         scale = 20
         # Create an all-yellow image
@@ -237,5 +237,61 @@ class Map_Obj():
                     for j in range(scale):
                         pixels[x * scale + i,
                                y * scale + j] = colors[map[y][x]]
+        # Show image
+        image.show()
+
+
+
+    def show_map_with_path(self, path, map=None):
+        """
+        A function used to draw the map as an image and show it.
+        :param map: map to use
+        :return: nothing.
+        """
+        # If a map is provided, set the goal and start positions
+        if map is not None:
+            self.set_start_pos_str_marker(self.start_pos, map)
+            self.set_goal_pos_str_marker(self.goal_pos, map)
+        # If no map is provided, use string_map
+        else:
+            map = self.str_map
+
+        # Define width and height of image
+        width = map.shape[1]
+        height = map.shape[0]
+        
+        # Define scale of the image
+        scale = 20
+        # Create an all-yellow image
+        image = Image.new('RGB', (width * scale, height * scale),
+                          (255, 255, 0))
+        # Load image
+        pixels = image.load()
+
+        # Define what colors to give to different values of the string map (undefined values will remain yellow, this is
+        # how the yellow path is painted)
+        colors = {
+            ' # ': (211, 33, 45),
+            ' . ': (215, 215, 215),
+            ' , ': (166, 166, 166),
+            ' : ': (96, 96, 96),
+            ' ; ': (36, 36, 36),
+            ' S ': (255, 0, 255),
+            ' G ': (0, 128, 255)
+        }
+        # Go through image and set pixel color for every position
+        for y in range(height):
+            for x in range(width):
+                if [y, x] in path:
+                    for i in range(scale - 4):
+                        for j in range(scale - 4):
+                            pixels[x * scale + i+2, y * scale + j+2] = (0, 0, 0)
+                if map[y][x] not in colors: continue
+
+                if [y, x] not in path:
+                    for i in range(scale):
+                        for j in range(scale):
+                            pixels[x * scale + i,
+                                y * scale + j] = colors[map[y][x]]
         # Show image
         image.show()
