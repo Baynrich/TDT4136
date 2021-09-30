@@ -34,17 +34,13 @@ class Path_Node():
         return self.f
 
 
-
-map = Map_Obj(task=3)
-
-
+map = Map_Obj()
 
 goal_pos = map.get_goal_pos()
 start_pos = map.get_start_pos()
 end_node = None
 opens = []
 closed = []
-
 
 start_h = math.sqrt((goal_pos[0] - start_pos[0])**2 + (goal_pos[1] - start_pos[1])**2)
 start_node = Path_Node(start_pos, None, 0, start_h, start_h)
@@ -72,7 +68,7 @@ while len(opens) > 0:
             continue
 
         # Find g value
-        child_g = current_node.get_g() + 1 + + map.get_cell_value(current_node.get_pos())
+        child_g = current_node.get_g() + 1
         child_from_opens = [node for node in opens if (node.get_x() == current_node.get_x() + x) and (node.get_y() == current_node.get_y() + y) ]
         if len(child_from_opens) > 0:
             if (child_g > child_from_opens[0].get_g()):
@@ -92,5 +88,4 @@ while(end_node != None and end_node.get_parent() != None):
     end_node = end_node.get_parent()
 path.append(end_node.get_pos())
 
-map.show_map()
 map.show_map_with_path(path)
