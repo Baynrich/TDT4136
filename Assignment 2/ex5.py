@@ -64,5 +64,4 @@ class exercise5():
             end_node = end_node.get_parent()
         path.append(end_node.get_pos())
 
-        map.show_map()
         map.show_map_with_path(path)
