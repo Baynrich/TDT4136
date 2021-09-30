@@ -58,6 +58,7 @@ class exercise5():
                 child_f = child_g + child_h
                 opens.append(Path_Node([current_node.get_pos()[0] + x, current_node.get_pos()[1] + y ], current_node, child_g, child_h, child_f))
 
+        # Iterate backwards through nodes to find our optimal path.
         path = []
         while(end_node != None and end_node.get_parent() != None):
             path.append(end_node.get_pos())
