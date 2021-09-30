@@ -209,6 +209,7 @@ class Map_Obj():
         # Define width and height of image
         width = map.shape[1]
         height = map.shape[0]
+        
         # Define scale of the image
         scale = 20
         # Create an all-yellow image
