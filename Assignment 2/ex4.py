@@ -4,7 +4,7 @@ from operator import attrgetter
 from Map import Map_Obj
 from path_node import Path_Node
 
-class task4():
+class exercise4():
     def __init__(self, task=1):
         self.task = task
     
