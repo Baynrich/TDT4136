@@ -136,14 +136,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         legalMoves = gameState.getLegalActions()
-        moveScores = [self.minimax(5, gameState.generateSuccessor(0, action), True) for action in legalMoves]
+        moveScores = [self.minimax(self.depth, gameState.generateSuccessor(0, action), True) for action in legalMoves]
         bestIndex = moveScores.index(max(moveScores))
         return legalMoves[bestIndex]
     
     def minimax(self, depth, gameState, maxTurn):
         # We've reached our final iteration, return static evaluation of position.
         if depth == 0:
-            return scoreEvaluationFunction(gameState)
+            return self.evaluationFunction(gameState)
 
         legalMoves = gameState.getLegalActions()
         #scores = [self.minimax(depth - 1, gameState.generateSuccessor(0, action), not maxTurn) for action in legalMoves]
@@ -172,7 +172,36 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        legalMoves = gameState.getLegalActions()
+        moveScores = [self.minimax(self.depth, gameState.generateSuccessor(0, action), True, -float('inf'), float('inf')) for action in legalMoves]
+        bestIndex = moveScores.index(max(moveScores))
+        return legalMoves[bestIndex]
+
+    def minimax(self, depth, gameState, maxTurn, alpha, beta):
+        # We've reached our final iteration, return static evaluation of position.
+        if depth == 0:
+            return self.evaluationFunction(gameState)
+
+        legalMoves = gameState.getLegalActions()
+        #scores = [self.minimax(depth - 1, gameState.generateSuccessor(0, action), not maxTurn) for action in legalMoves]
+        if maxTurn:
+            bestVal = -float('inf')
+            for action in legalMoves:
+                value = self.minimax(depth - 1, gameState.generateSuccessor(0, action), not maxTurn, alpha, beta)
+                bestVal = max(bestVal, value)
+                alpha = max(alpha, bestVal)
+                if beta <= alpha:
+                    break
+            return bestVal
+        else:
+            bestVal = float('inf')
+            for action in legalMoves:
+                value = self.minimax(depth - 1, gameState.generateSuccessor(0, action), not maxTurn, alpha, beta)
+                bestVal = min(bestVal, value)
+                beta = min( beta, bestVal)
+                if beta <= alpha:
+                    break
+            return bestVal
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
