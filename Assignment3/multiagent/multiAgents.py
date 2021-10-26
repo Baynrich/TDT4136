@@ -135,6 +135,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         Returns whether or not the game state is a losing state
         """
         "*** YOUR CODE HERE ***"
+
         legalMoves = gameState.getLegalActions()
         moveScores = [self.minimax(self.depth, gameState.generateSuccessor(0, action), True) for action in legalMoves]
         bestIndex = moveScores.index(max(moveScores))
@@ -146,7 +147,6 @@ class MinimaxAgent(MultiAgentSearchAgent):
             return self.evaluationFunction(gameState)
 
         legalMoves = gameState.getLegalActions()
-        #scores = [self.minimax(depth - 1, gameState.generateSuccessor(0, action), not maxTurn) for action in legalMoves]
         if maxTurn:
             bestVal = -float('inf')
             for action in legalMoves:
