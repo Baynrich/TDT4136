@@ -80,11 +80,11 @@ class CSP:
         # Run AC-3 on all constraints in the CSP, to weed out all of the
         # values that are not arc-consistent to begin with
         self.inference(assignment, self.get_all_arcs())
-
+        constraints = copy.deepcopy(self.constraints)
         # Call backtrack with the partial assignment 'assignment'
-        return self.backtrack(assignment)
+        return self.backtrack(assignment, constraints)
 
-    def backtrack(self, assignment):
+    def backtrack(self, assignment, constraints):
         """The function 'Backtrack' from the pseudocode in the
         textbook.
 
@@ -108,8 +108,39 @@ class CSP:
         assignments and inferences that took place in previous
         iterations of the loop.
         """
-        # TODO: IMPLEMENT THIS
+        # If assignment is complete, we return our assignment.
+        if self.is_complete(assignment):
+            return assignment
+
+        # Assignment is not complete, we select a new variable.
+        current_position = self.select_unassigned_variable(assignment)
+        for value in self.domains[current_position]:
+            constraints = self.inference(assignment, self.get_all_neighboring_arcs(current_position))
+            if self.satisfies_constraints(current_position, value):
+                assignment[current_position] = [value]
+
+                result = self.backtrack(assignment, constraints)
+                if self.constraint_sanity(constraints):
+                    return result
+
+
+
+
+
+
+    def satisfies_constraints(self, position, value):
         pass
+
+    def constraint_sanity(self, constraints):
+        pass
+
+    def is_complete(self, assignment):
+        variable_keys = assignment.keys()
+        for key in variable_keys:
+            if len(assignment[key]) > 1:
+                return False
+        return True
+
 
     def select_unassigned_variable(self, assignment):
         """The function 'Select-Unassigned-Variable' from the pseudocode
@@ -117,10 +148,14 @@ class CSP:
         in 'assignment' that have not yet been decided, i.e. whose list
         of legal values has a length greater than one.
         """
-        # TODO: IMPLEMENT THIS
-        pass
+        # Iterate over board positions until we find a position with more than one possible value
+        variable_keys = assignment.keys()
+        for key in variable_keys:
+            if len(assignment[key]) > 1:
+                return key
+        raise AssertionError("Iterated over all positions and did not find variable with multiple possible values.")
 
-    def inference(self, assignment, queue):
+    def inference(self, assignment, constraints, queue):
         """The function 'AC-3' from the pseudocode in the textbook.
         'assignment' is the current partial assignment, that contains
         the lists of legal values for each undecided variable. 'queue'
@@ -129,7 +164,7 @@ class CSP:
         # TODO: IMPLEMENT THIS
         pass
 
-    def revise(self, assignment, i, j):
+    def revise(self, assignment, constraints, i, j):
         """The function 'Revise' from the pseudocode in the textbook.
         'assignment' is the current partial assignment, that contains
         the lists of legal values for each undecided variable. 'i' and
@@ -138,8 +173,22 @@ class CSP:
         between i and j, the value should be deleted from i's list of
         legal values in 'assignment'.
         """
-        # TODO: IMPLEMENT THIS
-        pass
+        revised = False
+        for x in assignment[i]:
+            allow_x = False
+            for y in assignment[j]:
+                possible_combinations = constraints[i][j]
+                for combination in possible_combinations:
+                    if combination[0] == x and combination[1] == y:
+                        allow_x = True
+            if not allow_x:
+                assignment[i] = [value for value in assignment[i] if value != x]
+                revised = True
+        return revised
+
+
+
+
 
 
 def create_map_coloring_csp():
@@ -202,3 +251,7 @@ def print_sudoku_solution(solution):
         print("")
         if row == 2 or row == 5:
             print('------+-------+------')
+
+csp = create_sudoku_csp('easy.txt')
+print(csp.constraints['0-2']['1-2'])
+
