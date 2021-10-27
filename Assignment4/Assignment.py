@@ -162,7 +162,15 @@ class CSP:
         is the initial queue of arcs that should be visited.
         """
         # TODO: IMPLEMENT THIS
-        pass
+        while len(queue) > 0:
+            current_arc = queue.pop(0)
+            if self.revise(assignment, constraints, current_arc[0], current_arc[1]):
+                if len(assignment[current_arc[0]]) < 1:
+                    return False
+                queue = [*queue, *[arc for arc in self.get_all_neighboring_arcs(current_arc[0]) if arc[0] != current_arc[1]]]
+        return True
+
+
 
     def revise(self, assignment, constraints, i, j):
         """The function 'Revise' from the pseudocode in the textbook.
@@ -185,10 +193,6 @@ class CSP:
                 assignment[i] = [value for value in assignment[i] if value != x]
                 revised = True
         return revised
-
-
-
-
 
 
 def create_map_coloring_csp():
