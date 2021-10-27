@@ -79,7 +79,7 @@ class CSP:
 
         # Run AC-3 on all constraints in the CSP, to weed out all of the
         # values that are not arc-consistent to begin with
-        self.inference(assignment, self.get_all_arcs())
+        self.inference(assignment, self.constraints, self.get_all_arcs())
         constraints = copy.deepcopy(self.constraints)
         # Call backtrack with the partial assignment 'assignment'
         return self.backtrack(assignment, constraints)
@@ -115,15 +115,15 @@ class CSP:
         # Assignment is not complete, we select a new variable.
         current_position = self.select_unassigned_variable(assignment)
         for value in self.domains[current_position]:
-            constraints = self.inference(assignment, self.get_all_neighboring_arcs(current_position))
+            inference = self.inference(assignment, constraints, self.get_all_neighboring_arcs(current_position))
             if self.satisfies_constraints(current_position, value):
                 assignment[current_position] = [value]
-
-                result = self.backtrack(assignment, constraints)
-                if self.constraint_sanity(constraints):
-                    return result
-
-
+                if inference:
+                    result = self.backtrack(assignment, constraints)
+                    if self.constraint_sanity(constraints):
+                        return result
+            assignment[current_position] = [d for d in assignment[current_position] if d != value]
+        return False
 
 
 
@@ -161,7 +161,6 @@ class CSP:
         the lists of legal values for each undecided variable. 'queue'
         is the initial queue of arcs that should be visited.
         """
-        # TODO: IMPLEMENT THIS
         while len(queue) > 0:
             current_arc = queue.pop(0)
             if self.revise(assignment, constraints, current_arc[0], current_arc[1]):
@@ -169,7 +168,6 @@ class CSP:
                     return False
                 queue = [*queue, *[arc for arc in self.get_all_neighboring_arcs(current_arc[0]) if arc[0] != current_arc[1]]]
         return True
-
 
 
     def revise(self, assignment, constraints, i, j):
@@ -257,5 +255,6 @@ def print_sudoku_solution(solution):
             print('------+-------+------')
 
 csp = create_sudoku_csp('easy.txt')
-print(csp.constraints['0-2']['1-2'])
+solution = csp.backtracking_search()
+print_sudoku_solution(solution)
 
